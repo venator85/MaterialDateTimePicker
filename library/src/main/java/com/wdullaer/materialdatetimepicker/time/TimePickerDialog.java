@@ -36,7 +36,6 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.wdullaer.materialdatetimepicker.HapticFeedbackController;
 import com.wdullaer.materialdatetimepicker.R;
 import com.wdullaer.materialdatetimepicker.TypefaceHelper;
 import com.wdullaer.materialdatetimepicker.Utils;
@@ -81,8 +80,6 @@ public class TimePickerDialog extends DialogFragment implements
     private DialogInterface.OnCancelListener mOnCancelListener;
     private DialogInterface.OnDismissListener mOnDismissListener;
 
-    private HapticFeedbackController mHapticFeedbackController;
-
     private Button mCancelButton;
     private Button mOkButton;
     private TextView mHourView;
@@ -123,6 +120,8 @@ public class TimePickerDialog extends DialogFragment implements
     private String mSelectHours;
     private String mMinutePickerDescription;
     private String mSelectMinutes;
+
+    private TypefaceHelper typefaceHelper;
 
     /**
      * The callback interface used to indicate the user is done filling in
@@ -294,8 +293,6 @@ public class TimePickerDialog extends DialogFragment implements
         mAmText = amPmTexts[0];
         mPmText = amPmTexts[1];
 
-        mHapticFeedbackController = new HapticFeedbackController(getActivity());
-
         mTimePicker = (RadialPickerLayout) view.findViewById(R.id.time_picker);
         mTimePicker.setOnValueSelectedListener(this);
         mTimePicker.setOnKeyListener(keyboardListener);
@@ -314,14 +311,12 @@ public class TimePickerDialog extends DialogFragment implements
             @Override
             public void onClick(View v) {
                 setCurrentItemShowing(HOUR_INDEX, true, false, true);
-                tryVibrate();
             }
         });
         mMinuteView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 setCurrentItemShowing(MINUTE_INDEX, true, false, true);
-                tryVibrate();
             }
         });
 
@@ -332,7 +327,6 @@ public class TimePickerDialog extends DialogFragment implements
                 if (mInKbMode && isTypedTimeFullyLegal()) {
                     finishKbMode(false);
                 } else {
-                    tryVibrate();
                 }
                 if (mCallback != null) {
                     mCallback.onTimeSet(mTimePicker,
@@ -342,18 +336,20 @@ public class TimePickerDialog extends DialogFragment implements
             }
         });
         mOkButton.setOnKeyListener(keyboardListener);
-        mOkButton.setTypeface(TypefaceHelper.get(getDialog().getContext(), "Roboto-Medium"));
 
         mCancelButton = (Button) view.findViewById(R.id.cancel);
         mCancelButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                tryVibrate();
                 if(getDialog() != null) getDialog().cancel();
             }
         });
-        mCancelButton.setTypeface(TypefaceHelper.get(getDialog().getContext(),"Roboto-Medium"));
         mCancelButton.setVisibility(isCancelable() ? View.VISIBLE : View.GONE);
+
+        if (typefaceHelper != null) {
+            mOkButton.setTypeface(typefaceHelper.getButtonTypeface());
+            mCancelButton.setTypeface(typefaceHelper.getButtonTypeface());
+        }
 
         // Enable or disable the AM/PM view.
         mAmPmHitspace = view.findViewById(R.id.ampm_hitspace);
@@ -371,7 +367,6 @@ public class TimePickerDialog extends DialogFragment implements
             mAmPmHitspace.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    tryVibrate();
                     int amOrPm = mTimePicker.getIsCurrentlyAmOrPm();
                     if (amOrPm == AM) {
                         amOrPm = PM;
@@ -427,15 +422,8 @@ public class TimePickerDialog extends DialogFragment implements
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        mHapticFeedbackController.start();
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
-        mHapticFeedbackController.stop();
         if(mDismissOnPause) dismiss();
     }
 
@@ -449,11 +437,6 @@ public class TimePickerDialog extends DialogFragment implements
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
         if(mOnDismissListener != null) mOnDismissListener.onDismiss(dialog);
-    }
-
-    @Override
-    public void tryVibrate() {
-        if(mVibrate) mHapticFeedbackController.tryVibrate();
     }
 
     private void updateAmPmDisplay(int amOrPm) {
@@ -1085,5 +1068,9 @@ public class TimePickerDialog extends DialogFragment implements
             }
             return false;
         }
+    }
+
+    public void setTypefaceHelper(TypefaceHelper typefaceHelper) {
+        this.typefaceHelper = typefaceHelper;
     }
 }

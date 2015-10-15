@@ -29,6 +29,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.wdullaer.materialdatetimepicker.R;
+import com.wdullaer.materialdatetimepicker.TypefaceHelper;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog.OnDateChangedListener;
 
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import java.util.List;
  */
 public class YearPickerView extends ListView implements OnItemClickListener, OnDateChangedListener {
     private static final String TAG = "YearPickerView";
+    protected static TypefaceHelper typefaceHelper;
 
     private final DatePickerController mController;
     private YearAdapter mAdapter;
@@ -79,7 +81,6 @@ public class YearPickerView extends ListView implements OnItemClickListener, OnD
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        mController.tryVibrate();
         TextViewWithCircularIndicator clickedView = (TextViewWithCircularIndicator) view;
         if (clickedView != null) {
             if (clickedView != mSelectedView) {
@@ -100,6 +101,10 @@ public class YearPickerView extends ListView implements OnItemClickListener, OnD
         return Integer.valueOf(view.getText().toString());
     }
 
+    public static void setTypefaceHelper(TypefaceHelper typefaceHelper) {
+        YearPickerView.typefaceHelper = typefaceHelper;
+    }
+
     private class YearAdapter extends ArrayAdapter<String> {
 
         public YearAdapter(Context context, int resource, List<String> objects) {
@@ -111,6 +116,9 @@ public class YearPickerView extends ListView implements OnItemClickListener, OnD
             TextViewWithCircularIndicator v = (TextViewWithCircularIndicator)
                     super.getView(position, convertView, parent);
             v.setAccentColor(mController.getAccentColor());
+            if (typefaceHelper != null) {
+                v.setTypeface(typefaceHelper.getSelectedYearMonthDayTypeface());
+            }
             v.requestLayout();
             int year = getYearFromTextView(v);
             boolean selected = mController.getSelectedDay().year == year;

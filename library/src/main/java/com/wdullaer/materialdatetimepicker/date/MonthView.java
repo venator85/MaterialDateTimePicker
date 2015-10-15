@@ -23,7 +23,6 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
@@ -124,9 +123,6 @@ public abstract class MonthView extends View {
     // affects the padding on the sides of this view
     protected int mEdgePadding = 0;
 
-    private String mDayOfWeekTypeface;
-    private String mMonthTitleTypeface;
-
     protected Paint mMonthNumPaint;
     protected Paint mMonthTitlePaint;
     protected Paint mSelectedCirclePaint;
@@ -186,6 +182,8 @@ public abstract class MonthView extends View {
     protected int mDisabledDayTextColor;
     protected int mMonthTitleColor;
 
+    protected static TypefaceHelper typefaceHelper;
+
     public MonthView(Context context) {
         this(context, null, null);
     }
@@ -197,9 +195,6 @@ public abstract class MonthView extends View {
 
         mDayLabelCalendar = Calendar.getInstance();
         mCalendar = Calendar.getInstance();
-
-        mDayOfWeekTypeface = res.getString(R.string.mdtp_day_of_week_label_typeface);
-        mMonthTitleTypeface = res.getString(R.string.mdtp_sans_serif);
 
         boolean darkTheme = mController != null && mController.isThemeDark();
         if(darkTheme) {
@@ -243,6 +238,10 @@ public abstract class MonthView extends View {
 
     public void setDatePickerController(DatePickerController controller) {
         mController = controller;
+    }
+
+    public static void setTypefaceHelper(TypefaceHelper typefaceHelper) {
+        MonthView.typefaceHelper = typefaceHelper;
     }
 
     protected MonthViewTouchHelper getMonthViewTouchHelper() {
@@ -293,7 +292,9 @@ public abstract class MonthView extends View {
         mMonthTitlePaint.setFakeBoldText(true);
         mMonthTitlePaint.setAntiAlias(true);
         mMonthTitlePaint.setTextSize(MONTH_LABEL_TEXT_SIZE);
-        mMonthTitlePaint.setTypeface(Typeface.create(mMonthTitleTypeface, Typeface.BOLD));
+        if (typefaceHelper != null) {
+            mMonthTitlePaint.setTypeface(typefaceHelper.getMonthTitleTypeface());
+        }
         mMonthTitlePaint.setColor(mDayTextColor);
         mMonthTitlePaint.setTextAlign(Align.CENTER);
         mMonthTitlePaint.setStyle(Style.FILL);
@@ -310,7 +311,9 @@ public abstract class MonthView extends View {
         mMonthDayLabelPaint.setAntiAlias(true);
         mMonthDayLabelPaint.setTextSize(MONTH_DAY_LABEL_TEXT_SIZE);
         mMonthDayLabelPaint.setColor(mMonthDayTextColor);
-        mMonthDayLabelPaint.setTypeface(TypefaceHelper.get(getContext(),"Roboto-Medium"));
+        if (typefaceHelper != null) {
+            mMonthDayLabelPaint.setTypeface(typefaceHelper.getMonthDayLabelTypeface());
+        }
         mMonthDayLabelPaint.setStyle(Style.FILL);
         mMonthDayLabelPaint.setTextAlign(Align.CENTER);
         mMonthDayLabelPaint.setFakeBoldText(true);

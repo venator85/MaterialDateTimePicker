@@ -37,7 +37,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.wdullaer.materialdatetimepicker.HapticFeedbackController;
 import com.wdullaer.materialdatetimepicker.R;
 import com.wdullaer.materialdatetimepicker.TypefaceHelper;
 import com.wdullaer.materialdatetimepicker.Utils;
@@ -119,8 +118,6 @@ public class DatePickerDialog extends DialogFragment implements
     private boolean mDismissOnPause = false;
     private int mDefaultView = MONTH_AND_DAY_VIEW;
 
-    private HapticFeedbackController mHapticFeedbackController;
-
     private boolean mDelayAnimation = true;
 
     // Accessibility strings.
@@ -128,6 +125,8 @@ public class DatePickerDialog extends DialogFragment implements
     private String mSelectDay;
     private String mYearPickerDescription;
     private String mSelectYear;
+
+    private TypefaceHelper typefaceHelper;
 
     /**
      * The callback used to indicate the user is done filling in the date.
@@ -238,6 +237,13 @@ public class DatePickerDialog extends DialogFragment implements
         mYearView = (TextView) view.findViewById(R.id.date_picker_year);
         mYearView.setOnClickListener(this);
 
+        if (typefaceHelper != null) {
+            mDayOfWeekView.setTypeface(typefaceHelper.getDayOfWeekTypeface());
+            mSelectedMonthTextView.setTypeface(typefaceHelper.getSelectedYearMonthDayTypeface());
+            mSelectedDayTextView.setTypeface(typefaceHelper.getSelectedYearMonthDayTypeface());
+            mYearView.setTypeface(typefaceHelper.getSelectedYearMonthDayTypeface());
+        }
+
         int listPosition = -1;
         int listPositionOffset = 0;
         int currentView = mDefaultView;
@@ -289,7 +295,6 @@ public class DatePickerDialog extends DialogFragment implements
 
             @Override
             public void onClick(View v) {
-                tryVibrate();
                 if (mCallBack != null) {
                     mCallBack.onDateSet(DatePickerDialog.this, mCalendar.get(Calendar.YEAR),
                             mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH));
@@ -297,18 +302,20 @@ public class DatePickerDialog extends DialogFragment implements
                 dismiss();
             }
         });
-        okButton.setTypeface(TypefaceHelper.get(activity,"Roboto-Medium"));
 
         Button cancelButton = (Button) view.findViewById(R.id.cancel);
         cancelButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                tryVibrate();
                 if(getDialog() != null) getDialog().cancel();
             }
         });
-        cancelButton.setTypeface(TypefaceHelper.get(activity,"Roboto-Medium"));
         cancelButton.setVisibility(isCancelable() ? View.VISIBLE : View.GONE);
+
+        if (typefaceHelper != null) {
+            okButton.setTypeface(typefaceHelper.getButtonTypeface());
+            cancelButton.setTypeface(typefaceHelper.getButtonTypeface());
+        }
 
         // If an accent color has not been set manually, get it from the context
         if (mAccentColor == -1) {
@@ -330,20 +337,12 @@ public class DatePickerDialog extends DialogFragment implements
             }
         }
 
-        mHapticFeedbackController = new HapticFeedbackController(activity);
         return view;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mHapticFeedbackController.start();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mHapticFeedbackController.stop();
         if(mDismissOnPause) dismiss();
     }
 
@@ -625,7 +624,6 @@ public class DatePickerDialog extends DialogFragment implements
 
     @Override
     public void onClick(View v) {
-        tryVibrate();
         if (v.getId() == R.id.date_picker_year) {
             setCurrentView(YEAR_VIEW);
         } else if (v.getId() == R.id.date_picker_month_and_day) {
@@ -821,8 +819,9 @@ public class DatePickerDialog extends DialogFragment implements
         mListeners.remove(listener);
     }
 
-    @Override
-    public void tryVibrate() {
-        if(mVibrate) mHapticFeedbackController.tryVibrate();
+    public void setTypefaceHelper(TypefaceHelper typefaceHelper) {
+        this.typefaceHelper = typefaceHelper;
+        MonthView.setTypefaceHelper(typefaceHelper);
+        YearPickerView.setTypefaceHelper(typefaceHelper);
     }
 }

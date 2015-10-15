@@ -21,8 +21,4 @@ public interface TimePickerController {
      */
     int getAccentColor();
 
-    /**
-     * Request the device to vibrate
-     */
-    void tryVibrate();
 }

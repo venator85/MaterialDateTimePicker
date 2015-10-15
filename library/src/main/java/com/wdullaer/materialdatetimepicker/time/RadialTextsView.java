@@ -92,10 +92,10 @@ public class RadialTextsView extends View {
         // Set up the paint.
         int textColorRes = controller.isThemeDark() ? R.color.mdtp_white : R.color.mdtp_numbers_text_color;
         mPaint.setColor(res.getColor(textColorRes));
-        String typefaceFamily = res.getString(R.string.mdtp_radial_numbers_typeface);
-        mTypefaceLight = Typeface.create(typefaceFamily, Typeface.NORMAL);
-        String typefaceFamilyRegular = res.getString(R.string.mdtp_sans_serif);
-        mTypefaceRegular = Typeface.create(typefaceFamilyRegular, Typeface.NORMAL);
+//        String typefaceFamily = res.getString(R.string.mdtp_radial_numbers_typeface);
+        mTypefaceLight = Typeface.DEFAULT;
+//        String typefaceFamilyRegular = res.getString(R.string.mdtp_sans_serif);
+        mTypefaceRegular = Typeface.DEFAULT;
         mPaint.setAntiAlias(true);
         mPaint.setTextAlign(Align.CENTER);
 

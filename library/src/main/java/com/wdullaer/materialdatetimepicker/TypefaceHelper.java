@@ -1,39 +1,35 @@
 package com.wdullaer.materialdatetimepicker;
 
 
-import android.content.Context;
 import android.graphics.Typeface;
-import android.support.v4.util.SimpleArrayMap;
 
-/*
-    Each call to Typeface.createFromAsset will load a new instance of the typeface into memory,
-    and this memory is not consistently get garbage collected
-    http://code.google.com/p/android/issues/detail?id=9904
-    (It states released but even on Lollipop you can see the typefaces accumulate even after
-    multiple GC passes)
-    You can detect this by running:
-    adb shell dumpsys meminfo com.your.packagenage
-    You will see output like:
-     Asset Allocations
-        zip:/data/app/com.your.packagenage-1.apk:/assets/Roboto-Medium.ttf: 125K
-        zip:/data/app/com.your.packagenage-1.apk:/assets/Roboto-Medium.ttf: 125K
-        zip:/data/app/com.your.packagenage-1.apk:/assets/Roboto-Medium.ttf: 125K
-        zip:/data/app/com.your.packagenage-1.apk:/assets/Roboto-Regular.ttf: 123K
-        zip:/data/app/com.your.packagenage-1.apk:/assets/Roboto-Medium.ttf: 125K
-*/
 public class TypefaceHelper {
 
-    private static final SimpleArrayMap<String, Typeface> cache = new SimpleArrayMap<>();
+	public Typeface getButtonTypeface() {
+		return Typeface.DEFAULT;
+	}
 
-    public static Typeface get(Context c, String name) {
-        synchronized (cache) {
-            if (!cache.containsKey(name)) {
-                Typeface t = Typeface.createFromAsset(
-                        c.getAssets(), String.format("fonts/%s.ttf", name));
-                cache.put(name, t);
-                return t;
-            }
-            return cache.get(name);
-        }
-    }
+	public Typeface getMonthDayLabelTypeface() {
+		return Typeface.DEFAULT;
+	}
+
+	public Typeface getDayOfWeekTypeface() {
+		return Typeface.DEFAULT;
+	}
+
+	public Typeface getMonthTitleTypeface() {
+		return Typeface.DEFAULT;
+	}
+
+	public Typeface getMonthDayNormalTypeface() {
+		return Typeface.DEFAULT;
+	}
+
+	public Typeface getMonthDaySelectedTypeface() {
+		return Typeface.DEFAULT;
+	}
+
+	public Typeface getSelectedYearMonthDayTypeface() {
+		return Typeface.DEFAULT;
+	}
 }

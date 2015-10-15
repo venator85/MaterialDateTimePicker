@@ -34,10 +34,14 @@ public class MainActivity extends AppCompatActivity implements
     private CheckBox titleTime;
     private CheckBox showYearFirst;
 
+    Fonts fonts;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        fonts = new Fonts(this);
 
         // Find our View instances
         timeTextView = (TextView)findViewById(R.id.time_textview);
@@ -67,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements
                         now.get(Calendar.MINUTE),
                         mode24Hours.isChecked()
                 );
+                tpd.setTypefaceHelper(fonts);
                 tpd.setThemeDark(modeDarkTime.isChecked());
                 tpd.vibrate(vibrateTime.isChecked());
                 tpd.dismissOnPause(dismissTime.isChecked());
@@ -97,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements
                         now.get(Calendar.MONTH),
                         now.get(Calendar.DAY_OF_MONTH)
                 );
+                dpd.setTypefaceHelper(fonts);
                 dpd.setThemeDark(modeDarkDate.isChecked());
                 dpd.vibrate(vibrateDate.isChecked());
                 dpd.dismissOnPause(dismissDate.isChecked());
